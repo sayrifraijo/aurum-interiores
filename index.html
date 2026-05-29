@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Llave Maestra — Aurum Arquitectos</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #F7F4EF;
+  --warm-white: #FDFBF8;
+  --stone: #C4B8A8;
+  --taupe: #8C7B6B;
+  --bark: #4A3728;
+  --charcoal: #2C2420;
+  --gold: #B8956A;
+  --muted: #9B8E82;
+  --border: #E0D8CE;
+  --success: #7A9E7E;
+  --warn: #C4956A;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--charcoal); min-height: 100vh; }
+
+/* HEADER */
+.site-header {
+  background: var(--charcoal); color: var(--cream);
+  padding: 0 24px; display: flex; align-items: center;
+  justify-content: space-between; height: 64px;
+  position: sticky; top: 0; z-index: 200;
+}
+.logo { display: flex; align-items: center; gap: 12px; }
+.logo-mark {
+  width: 34px; height: 34px; border: 1.5px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif; font-size: 15px;
+  font-weight: 600; color: var(--gold);
+}
+.logo-text {
+  font-family: 'Poppins', sans-serif; font-size: 13px;
+  font-weight: 300; letter-spacing: 3px; text-transform: uppercase; color: var(--cream);
+}
+.header-meta { text-align: right; font-size: 10px; font-weight: 300; color: var(--stone); line-height: 1.7; }
+
+/* BANNER */
+.project-banner {
+  background: var(--warm-white); border-bottom: 1px solid var(--border);
+  padding: 24px; display: flex; align-items: flex-end;
+  justify-content: space-between; flex-wrap: wrap; gap: 16px;
+}
+.project-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 40px;
+  font-weight: 300; letter-spacing: 4px; text-transform: uppercase; color: var(--bark);
+}
+.project-sub { font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 6px; }
+.progress-block { text-align: right; }
+.progress-label { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+.progress-bar-wrap { width: 160px; height: 2px; background: var(--border); margin-bottom: 4px; }
+.progress-bar-fill { height: 100%; background: var(--gold); transition: width 0.5s; }
+.progress-pct { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--bark); }
+
+/* LAYOUT */
+.layout { display: flex; min-height: calc(100vh - 64px); }
+
+/* SIDEBAR */
+.sidebar {
+  width: 240px; min-width: 240px; background: var(--warm-white);
+  border-right: 1px solid var(--border); padding: 24px 0;
+  position: sticky; top: 64px; height: calc(100vh - 64px);
+  overflow-y: auto; flex-shrink: 0;
+}
+.sidebar-plant {
+  padding: 8px 20px 4px; font-size: 9px; font-weight: 500;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--stone);
+}
+.nav-btn {
+  display: flex; align-items: center; width: 100%;
+  padding: 11px 20px; cursor: pointer;
+  border: none; border-left: 2px solid transparent;
+  background: transparent; text-align: left;
+  font-family: 'DM Sans', sans-serif; font-size: 13px;
+  color: var(--taupe); transition: all 0.15s;
+  -webkit-appearance: none; appearance: none;
+  touch-action: manipulation;
+}
+.nav-btn:hover, .nav-btn:active { background: var(--cream); color: var(--bark); }
+.nav-btn.active { border-left-color: var(--gold); color: var(--bark); background: var(--cream); font-weight: 500; }
+.sidebar-num { font-family: 'Cormorant Garamond', serif; font-size: 11px; color: var(--stone); margin-right: 8px; }
+.sidebar-name { flex: 1; }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+.status-dot.partial { background: var(--warn); }
+.status-dot.complete { background: var(--success); }
+
+/* MAIN */
+.main { flex: 1; padding: 32px 32px; max-width: 1000px; overflow-x: auto; }
+
+/* SPACE HEADER */
+.space-header {
+  display: flex; align-items: flex-start;
+  margin-bottom: 32px; padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.space-number {
+  font-family: 'Cormorant Garamond', serif; font-size: 60px;
+  font-weight: 300; color: var(--border); line-height: 1;
+  margin-right: 16px; flex-shrink: 0;
+}
+.space-title { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 400; color: var(--bark); letter-spacing: 2px; text-transform: uppercase; }
+.space-meta { display: flex; gap: 16px; margin-top: 6px; }
+.meta-chip { font-size: 11px; color: var(--muted); letter-spacing: 1px; }
+.meta-chip span { color: var(--bark); font-weight: 500; }
+
+/* TABS */
+.tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 28px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tab-btn {
+  padding: 10px 16px; font-size: 10px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--muted); cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  background: transparent; white-space: nowrap;
+  font-family: 'DM Sans', sans-serif; font-weight: 400;
+  transition: all 0.15s; -webkit-appearance: none; appearance: none;
+  touch-action: manipulation;
+}
+.tab-btn:hover, .tab-btn:active { color: var(--bark); }
+.tab-btn.active { color: var(--bark); border-bottom-color: var(--gold); font-weight: 500; }
+
+/* PANELS */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* SECTION LABEL */
+.section-label {
+  font-size: 10px; font-weight: 500; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 14px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.section-spacer { margin-bottom: 28px; }
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+/* MOODBOARD */
+.moodboard-drop {
+  border: 1.5px dashed var(--border); border-radius: 2px;
+  padding: 40px; text-align: center; background: var(--warm-white);
+  position: relative; min-height: 180px;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 10px;
+}
+.moodboard-drop input[type="file"] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer;
+  width: 100%; height: 100%; touch-action: manipulation;
+}
+.drop-icon { font-size: 28px; opacity: 0.3; }
+.drop-text { font-size: 13px; color: var(--muted); }
+.drop-sub { font-size: 11px; color: var(--stone); }
+.moodboard-preview { width: 100%; border-radius: 2px; display: block; }
+.moodboard-actions { margin-top: 10px; }
+
+/* NOTES */
+.notes-area {
+  width: 100%; min-height: 90px; border: 1px solid var(--border);
+  border-radius: 2px; padding: 14px; font-family: 'DM Sans', sans-serif;
+  font-size: 13px; color: var(--charcoal); background: var(--warm-white);
+  resize: vertical; outline: none; line-height: 1.7;
+}
+.notes-area:focus { border-color: var(--gold); }
+
+/* PRODUCT TABLE */
+.product-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; min-width: 600px; }
+.product-table th {
+  font-size: 9px; font-weight: 500; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--muted); padding: 8px 10px;
+  text-align: left; border-bottom: 1px solid var(--border);
+  background: var(--warm-white);
+}
+.product-table td { padding: 0; border-bottom: 1px solid var(--border); vertical-align: top; }
+.product-table td input {
+  width: 100%; border: none; padding: 9px 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 12px;
+  color: var(--charcoal); background: transparent; outline: none;
+}
+.product-table td input:focus { background: #FDF8F2; }
+.product-table tr:hover td { background: #FDFAF6; }
+.product-thumb { width: 44px; height: 44px; object-fit: cover; display: block; }
+.thumb-cell { width: 56px; padding: 6px !important; }
+.thumb-placeholder {
+  width: 44px; height: 44px; background: var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; opacity: 0.5; cursor: pointer;
+  position: relative; overflow: hidden;
+}
+.thumb-placeholder input[type="file"] {
+  position: absolute; inset: 0; opacity: 0;
+  cursor: pointer; touch-action: manipulation;
+}
+.row-del {
+  background: none; border: none; cursor: pointer;
+  color: var(--stone); font-size: 13px; padding: 9px 10px;
+  font-family: 'DM Sans', sans-serif;
+  touch-action: manipulation;
+}
+.row-del:hover { color: #c0392b; }
+
+/* BUTTONS */
+.btn {
+  padding: 9px 18px; font-family: 'DM Sans', sans-serif;
+  font-size: 10px; font-weight: 500; letter-spacing: 1.5px;
+  text-transform: uppercase; cursor: pointer; border-radius: 1px;
+  touch-action: manipulation; -webkit-appearance: none; appearance: none;
+}
+.btn-outline { background: transparent; color: var(--bark); border: 1px solid var(--border); }
+.btn-outline:hover, .btn-outline:active { border-color: var(--bark); }
+.btn-sm { padding: 6px 12px; font-size: 9px; }
+
+/* LINK INPUT */
+.link-row { display: flex; gap: 6px; align-items: center; }
+.link-row input {
+  flex: 1; border: none; padding: 9px 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 12px;
+  color: var(--charcoal); background: transparent; outline: none;
+}
+.link-row input:focus { background: #FDF8F2; }
+.link-go {
+  padding: 4px 8px; background: var(--bark); color: white;
+  border: none; cursor: pointer; font-size: 11px; border-radius: 1px;
+  text-decoration: none; flex-shrink: 0;
+  touch-action: manipulation;
+}
+
+/* ACABADOS */
+.acabados-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.acabado-card { background: var(--warm-white); border: 1px solid var(--border); padding: 16px; border-radius: 2px; }
+.acabado-title { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; font-weight: 500; }
+.acabado-card label { font-size: 10px; color: var(--muted); display: block; margin-bottom: 3px; }
+.acabado-card input {
+  width: 100%; border: 1px solid var(--border); border-radius: 1px;
+  padding: 7px 9px; font-family: 'DM Sans', sans-serif; font-size: 12px;
+  color: var(--charcoal); background: white; outline: none; margin-bottom: 8px;
+}
+.acabado-card input:focus { border-color: var(--gold); }
+
+/* PLANO */
+.plano-upload {
+  border: 1.5px dashed var(--border); padding: 28px;
+  text-align: center; background: var(--warm-white); border-radius: 2px;
+  position: relative; min-height: 140px;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 8px;
+}
+.plano-upload input[type="file"] {
+  position: absolute; inset: 0; opacity: 0;
+  cursor: pointer; touch-action: manipulation;
+}
+.plano-preview { max-width: 100%; max-height: 480px; display: block; margin: 0 auto; }
+
+/* SAVE INDICATOR */
+.save-indicator {
+  position: fixed; bottom: 20px; right: 20px;
+  background: var(--charcoal); color: var(--cream);
+  padding: 9px 18px; font-size: 10px; letter-spacing: 1px;
+  opacity: 0; transition: opacity 0.3s; border-radius: 1px;
+  pointer-events: none; z-index: 999;
+}
+.save-indicator.show { opacity: 1; }
+
+/* MOBILE */
+@media (max-width: 760px) {
+  .layout { flex-direction: column; }
+  .sidebar { width: 100%; min-width: unset; position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); padding: 12px 0; }
+  .main { padding: 20px 16px; }
+  .acabados-grid { grid-template-columns: 1fr; }
+  .logo-text { font-size: 14px; letter-spacing: 2px; }
+  .header-meta { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">
+    <img src="data:image/jpeg;base64,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" alt="Aurum Arquitectos" style="height:38px;display:block;">
+  </div>
+  <div class="header-meta">
+    Familia Navarro Muñoz · Llave Maestra<br>
+    Hermosillo, Sonora · Versión de trabajo
+  </div>
+</header>
+
+<div class="project-banner">
+  <div>
+    <div class="project-title">Llave Maestra</div>
+    <div class="project-sub">Programa de Interiores · Familia Navarro Muñoz</div>
+  </div>
+  <div class="progress-block">
+    <div class="progress-label">Avance general</div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="globalProgress" style="width:0%"></div>
+    </div>
+    <div class="progress-pct"><span id="progressPct">0</span>%</div>
+  </div>
+</div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><!-- JS --></nav>
+  <main class="main" id="mainContent"><!-- JS --></main>
+</div>
+
+<div class="save-indicator" id="saveIndicator">Guardado ✓</div>
+
+<script>
+var SPACES = [
+  { id: 'cocina',      num: '01', name: 'Cocina + Pantry',      planta: 'Planta Baja', m2: '15.55 + 8.32' },
+  { id: 'sala',        num: '02', name: 'Sala + Comedor',        planta: 'Planta Baja', m2: '18.81 + 17.01' },
+  { id: 'recamara',    num: '03', name: 'Recámara Principal',    planta: 'Planta Baja', m2: '40.86' },
+  { id: 'bano',        num: '04', name: 'Baño Principal',        planta: 'Planta Baja', m2: '' },
+  { id: 'mediobano',   num: '05', name: 'Medio Baño',            planta: 'Planta Baja', m2: '2.67' },
+  { id: 'terraza',     num: '06', name: 'Terraza + Balcón',      planta: 'Planta Baja', m2: '19.98 + 14.36' },
+  { id: 'salaprivada', num: '07', name: 'Sala Privada',          planta: 'Planta Alta', m2: '' },
+  { id: 'lectura',     num: '08', name: 'Cuarto de Lectura',     planta: 'Planta Alta', m2: '13.29' },
+  { id: 'recamarasec', num: '09', name: 'Recámara Secundaria',   planta: 'Planta Alta', m2: '32.89' },
+  { id: 'multiusos',   num: '10', name: 'Recámara Multiusos',    planta: 'Planta Alta', m2: '33.95 + 4.52' },
+  { id: 'lavanderia',  num: '11', name: 'Lavandería',            planta: 'Planta Alta', m2: '14.50' }
+];
+
+var TABS = [
+  { key: 'moodboard',    label: 'Moodboard' },
+  { key: 'mobiliario',   label: 'Mobiliario' },
+  { key: 'acabados',     label: 'Acabados' },
+  { key: 'herrajes',     label: 'Herrajes' },
+  { key: 'iluminacion',  label: 'Iluminación' },
+  { key: 'equipamiento', label: 'Equipamiento' },
+  { key: 'carpinteria',  label: 'Carpintería' }
+];
+
+var SECTION_LABELS = {
+  productos:    'Programa de Mobiliario',
+  herrajes:     'Programa de Herrajes',
+  iluminacion:  'Programa de Iluminación',
+  equipamiento: 'Programa de Equipamiento',
+  carpPiezas:   'Fichas Técnicas de Piezas'
+};
+
+var SECTION_BTNS = {
+  productos:    '+ Agregar mueble',
+  herrajes:     '+ Agregar herraje',
+  iluminacion:  '+ Agregar luminaria',
+  equipamiento: '+ Agregar equipo',
+  carpPiezas:   '+ Agregar pieza'
+};
+
+var STORAGE_KEY = 'aurum_llave_maestra_v2';
+var currentSpace = 'cocina';
+var currentTab = 'moodboard';
+var appData = {};
+var saveTimer = null;
+
+// ── DATA ──────────────────────────────────────
+function defaultSpace() {
+  return {
+    moodboard: null,
+    moodboardNotes: '',
+    productos: [],
+    acabados: {
+      piso:  { material:'', modelo:'', marca:'', notas:'' },
+      muro:  { material:'', modelo:'', marca:'', notas:'' },
+      techo: { material:'', modelo:'', marca:'', notas:'' }
+    },
+    herrajes: [],
+    iluminacion: [],
+    equipamiento: [],
+    carpinteria: { plano: null, notas: '', carpPiezas: [] }
+  };
+}
+
+function defaultProduct() {
+  return { img:'', nombre:'', desc:'', marca:'', dims:'', precio:'', entrega:'', link:'' };
+}
+
+function loadData() {
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) appData = JSON.parse(raw);
+  } catch(e) { appData = {}; }
+  for (var i = 0; i < SPACES.length; i++) {
+    if (!appData[SPACES[i].id]) appData[SPACES[i].id] = defaultSpace();
+  }
+}
+
+function saveData() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+    flashSave();
+    updateProgress();
+  } catch(e) {}
+}
+
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveData, 600);
+}
+
+function flashSave() {
+  var el = document.getElementById('saveIndicator');
+  el.classList.add('show');
+  setTimeout(function() { el.classList.remove('show'); }, 1800);
+}
+
+// ── PROGRESS ──────────────────────────────────
+function spaceScore(id) {
+  var d = appData[id];
+  if (!d) return 0;
+  var s = 0;
+  if (d.moodboard) s++;
+  if (d.productos && d.productos.length) s++;
+  if (d.acabados && d.acabados.piso && d.acabados.piso.material) s++;
+  if (d.herrajes && d.herrajes.length) s++;
+  if (d.equipamiento && d.equipamiento.length) s++;
+  return s;
+}
+
+function updateProgress() {
+  var total = 0;
+  for (var i = 0; i < SPACES.length; i++) {
+    var c = spaceScore(SPACES[i].id);
+    var dot = document.getElementById('dot-' + SPACES[i].id);
+    if (dot) dot.className = 'status-dot' + (c === 0 ? '' : (c >= 4 ? ' complete' : ' partial'));
+    total += c;
+  }
+  var pct = Math.round(total / (SPACES.length * 5) * 100);
+  document.getElementById('progressPct').textContent = pct;
+  document.getElementById('globalProgress').style.width = pct + '%';
+}
+
+// ── SIDEBAR ───────────────────────────────────
+function buildSidebar() {
+  var html = '';
+  var lastPlanta = '';
+  for (var i = 0; i < SPACES.length; i++) {
+    var s = SPACES[i];
+    if (s.planta !== lastPlanta) {
+      html += '<div class="sidebar-plant">' + s.planta + '</div>';
+      lastPlanta = s.planta;
+    }
+    html += '<button class="nav-btn' + (s.id === currentSpace ? ' active' : '') + '" id="nav-' + s.id + '" data-id="' + s.id + '">'
+          + '<span class="sidebar-num">' + s.num + '</span>'
+          + '<span class="sidebar-name">' + s.name + '</span>'
+          + '<span class="status-dot" id="dot-' + s.id + '"></span>'
+          + '</button>';
+  }
+  document.getElementById('sidebar').innerHTML = html;
+
+  var btns = document.querySelectorAll('.nav-btn');
+  for (var j = 0; j < btns.length; j++) {
+    btns[j].addEventListener('click', function() {
+      var id = this.getAttribute('data-id');
+      showSpace(id);
+    });
+  }
+}
+
+// ── NAVIGATION ────────────────────────────────
+function showSpace(id) {
+  currentSpace = id;
+  currentTab = 'moodboard';
+  var btns = document.querySelectorAll('.nav-btn');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+  var nb = document.getElementById('nav-' + id);
+  if (nb) nb.classList.add('active');
+  renderSpace();
+}
+
+function showTab(key) {
+  currentTab = key;
+  var tbs = document.querySelectorAll('.tab-btn');
+  for (var i = 0; i < tbs.length; i++) tbs[i].classList.remove('active');
+  var tb = document.getElementById('tb-' + key);
+  if (tb) tb.classList.add('active');
+  var panels = document.querySelectorAll('.tab-panel');
+  for (var j = 0; j < panels.length; j++) panels[j].classList.remove('active');
+  var p = document.getElementById('panel-' + key);
+  if (p) p.classList.add('active');
+}
+
+// ── RENDER SPACE ──────────────────────────────
+function renderSpace() {
+  var space = null;
+  for (var i = 0; i < SPACES.length; i++) { if (SPACES[i].id === currentSpace) { space = SPACES[i]; break; } }
+  var d = appData[currentSpace];
+  var main = document.getElementById('mainContent');
+
+  // Header
+  var headerHtml = '<div class="space-header">'
+    + '<div class="space-number">' + space.num + '</div>'
+    + '<div><div class="space-title">' + space.name + '</div>'
+    + '<div class="space-meta"><div class="meta-chip">' + space.planta + '</div>'
+    + (space.m2 ? '<div class="meta-chip">· <span>' + space.m2 + ' m²</span></div>' : '')
+    + '</div></div></div>';
+
+  // Tabs
+  var tabsHtml = '<div class="tabs">';
+  for (var t = 0; t < TABS.length; t++) {
+    tabsHtml += '<button class="tab-btn' + (TABS[t].key === currentTab ? ' active' : '') + '" id="tb-' + TABS[t].key + '" data-tab="' + TABS[t].key + '">' + TABS[t].label + '</button>';
+  }
+  tabsHtml += '</div>';
+
+  // Panels
+  var panelsHtml = '';
+  for (var p2 = 0; p2 < TABS.length; p2++) {
+    var k = TABS[p2].key;
+    var active = k === currentTab ? ' active' : '';
+    panelsHtml += '<div class="tab-panel' + active + '" id="panel-' + k + '">';
+    if (k === 'moodboard')    panelsHtml += buildMoodboard(d);
+    if (k === 'mobiliario')   panelsHtml += buildProductSection('productos', d.productos);
+    if (k === 'acabados')     panelsHtml += buildAcabados(d.acabados);
+    if (k === 'herrajes')     panelsHtml += buildProductSection('herrajes', d.herrajes);
+    if (k === 'iluminacion')  panelsHtml += buildProductSection('iluminacion', d.iluminacion);
+    if (k === 'equipamiento') panelsHtml += buildProductSection('equipamiento', d.equipamiento);
+    if (k === 'carpinteria')  panelsHtml += buildCarpinteria(d.carpinteria);
+    panelsHtml += '</div>';
+  }
+
+  main.innerHTML = headerHtml + tabsHtml + panelsHtml;
+
+  // Bind tab buttons
+  var tabBtns = document.querySelectorAll('.tab-btn');
+  for (var tb = 0; tb < tabBtns.length; tb++) {
+    tabBtns[tb].addEventListener('click', function() {
+      showTab(this.getAttribute('data-tab'));
+    });
+  }
+
+  // Bind all interactive elements
+  bindAll();
+}
+
+// ── MOODBOARD ─────────────────────────────────
+function buildMoodboard(d) {
+  var imgHtml;
+  if (d.moodboard) {
+    imgHtml = '<img src="' + d.moodboard + '" class="moodboard-preview">'
+            + '<div class="moodboard-actions"><button class="btn btn-outline btn-sm" id="clearMoodBtn">Cambiar imagen</button></div>';
+  } else {
+    imgHtml = '<div class="moodboard-drop">'
+            + '<input type="file" accept="image/*" id="moodboardInput">'
+            + '<div class="drop-icon">⊕</div>'
+            + '<div class="drop-text">Subir moodboard</div>'
+            + '<div class="drop-sub">PNG, JPG, WebP</div>'
+            + '</div>';
+  }
+  return '<div class="section-spacer"><div class="section-label">Imagen de moodboard</div>' + imgHtml + '</div>'
+       + '<div class="section-spacer"><div class="section-label">Notas de concepto</div>'
+       + '<textarea class="notes-area" id="moodboardNotes" placeholder="Concepto del espacio, materiales clave, atmósfera…">' + esc(d.moodboardNotes || '') + '</textarea></div>';
+}
+
+// ── PRODUCT SECTION ───────────────────────────
+function buildProductSection(section, items) {
+  var label = SECTION_LABELS[section] || section;
+  var addLabel = SECTION_BTNS[section] || '+ Agregar';
+  var rowsHtml = '';
+  if (items) {
+    for (var i = 0; i < items.length; i++) {
+      rowsHtml += buildProductRow(section, items[i], i);
+    }
+  }
+  return '<div class="section-label">' + label + '</div>'
+       + '<div style="overflow-x:auto">'
+       + '<table class="product-table"><thead><tr>'
+       + '<th style="width:56px">Img</th>'
+       + '<th style="width:130px">Elemento</th>'
+       + '<th style="width:150px">Descripción</th>'
+       + '<th style="width:110px">Marca</th>'
+       + '<th style="width:100px">Dims (mm)</th>'
+       + '<th style="width:80px">Precio</th>'
+       + '<th style="width:70px">Entrega</th>'
+       + '<th>Link</th>'
+       + '<th style="width:36px"></th>'
+       + '</tr></thead>'
+       + '<tbody id="tbody-' + section + '">' + rowsHtml + '</tbody>'
+       + '</table></div>'
+       + '<button class="btn btn-outline btn-sm" id="addBtn-' + section + '" data-section="' + section + '">' + addLabel + '</button>';
+}
+
+function buildProductRow(section, item, idx) {
+  var imgCell = item.img
+    ? '<img src="' + item.img + '" class="product-thumb">'
+    : '<div class="thumb-placeholder"><input type="file" accept="image/*" class="prodImgInput" data-section="' + section + '" data-idx="' + idx + '">＋</div>';
+  return '<tr data-section="' + section + '" data-idx="' + idx + '">'
+    + '<td class="thumb-cell">' + imgCell + '</td>'
+    + '<td><input value="' + esc(item.nombre||'') + '" placeholder="Nombre" class="prodField" data-section="' + section + '" data-idx="' + idx + '" data-field="nombre"></td>'
+    + '<td><input value="' + esc(item.desc||'') + '" placeholder="Descripción" class="prodField" data-section="' + section + '" data-idx="' + idx + '" data-field="desc"></td>'
+    + '<td><input value="' + esc(item.marca||'') + '" placeholder="Marca" class="prodField" data-section="' + section + '" data-idx="' + idx + '" data-field="marca"></td>'
+    + '<td><input value="' + esc(item.dims||'') + '" placeholder="W×D×H" class="prodField" data-section="' + section + '" data-idx="' + idx + '" data-field="dims"></td>'
+    + '<td><input value="' + esc(item.precio||'') + '" placeholder="$" class="prodField" data-section="' + section + '" data-idx="' + idx + '" data-field="precio"></td>'
+    + '<td><input value="' + esc(item.entrega||'') + '" placeholder="sem." class="prodField" data-section="' + section + '" data-idx="' + idx + '" data-field="entrega"></td>'
+    + '<td><div class="link-row"><input value="' + esc(item.link||'') + '" placeholder="https://…" class="prodField" data-section="' + section + '" data-idx="' + idx + '" data-field="link">'
+    + (item.link ? '<a href="' + esc(item.link) + '" target="_blank" class="link-go">↗</a>' : '')
+    + '</div></td>'
+    + '<td><button class="row-del" data-section="' + section + '" data-idx="' + idx + '">✕</button></td>'
+    + '</tr>';
+}
+
+// ── ACABADOS ──────────────────────────────────
+function buildAcabados(acabados) {
+  var zones = [{ key:'piso', label:'Piso' }, { key:'muro', label:'Muro' }, { key:'techo', label:'Techo' }];
+  var html = '';
+  for (var i = 0; i < zones.length; i++) {
+    var z = zones[i];
+    var a = (acabados && acabados[z.key]) ? acabados[z.key] : {};
+    if (i > 0) html += '<div class="divider"></div>';
+    html += '<div class="section-spacer">'
+          + '<div class="section-label">' + z.label + '</div>'
+          + '<div class="acabados-grid">'
+          + acabadoCard('Material', 'acabado-' + z.key + '-material', a.material || '')
+          + acabadoCard('Modelo / Acabado', 'acabado-' + z.key + '-modelo', a.modelo || '')
+          + acabadoCard('Marca / Proveedor', 'acabado-' + z.key + '-marca', a.marca || '', 'Notas', 'acabado-' + z.key + '-notas', a.notas || '')
+          + '</div></div>';
+  }
+  return html;
+}
+
+function acabadoCard(label, id, val, label2, id2, val2) {
+  var html = '<div class="acabado-card"><div class="acabado-title">' + label + '</div>'
+           + '<input id="' + id + '" value="' + esc(val) + '" placeholder="' + label + '…" class="acabadoField" data-acabado-id="' + id + '">';
+  if (label2) {
+    html += '<label>' + label2 + '</label><input id="' + id2 + '" value="' + esc(val2) + '" placeholder="' + label2 + '…" class="acabadoField" data-acabado-id="' + id2 + '">';
+  }
+  html += '</div>';
+  return html;
+}
+
+// ── CARPINTERÍA ───────────────────────────────
+function buildCarpinteria(carp) {
+  var planoHtml;
+  if (carp && carp.plano) {
+    planoHtml = '<img src="' + carp.plano + '" class="plano-preview">'
+              + '<div class="moodboard-actions"><button class="btn btn-outline btn-sm" id="clearPlanoBtn">Cambiar plano</button></div>';
+  } else {
+    planoHtml = '<div class="plano-upload">'
+              + '<input type="file" accept="image/*" id="planoInput">'
+              + '<div class="drop-icon">📐</div>'
+              + '<div class="drop-text">Subir plano de carpintería</div>'
+              + '<div class="drop-sub">Imagen del plano</div>'
+              + '</div>';
+  }
+  var piezas = (carp && carp.carpPiezas) ? carp.carpPiezas : [];
+  return '<div class="section-spacer"><div class="section-label">Plano de carpintería / clóset</div>' + planoHtml + '</div>'
+       + '<div class="section-spacer">' + buildProductSection('carpPiezas', piezas) + '</div>'
+       + '<div class="section-spacer"><div class="section-label">Notas de carpintería</div>'
+       + '<textarea class="notes-area" id="carpNotes" placeholder="Materiales, acabados, especificaciones…">' + esc((carp && carp.notas) || '') + '</textarea></div>';
+}
+
+// ── BIND ALL EVENTS ───────────────────────────
+function bindAll() {
+  var d = appData[currentSpace];
+
+  // Moodboard upload
+  var moodInput = document.getElementById('moodboardInput');
+  if (moodInput) {
+    moodInput.addEventListener('change', function() {
+      readFile(this.files[0], function(result) {
+        appData[currentSpace].moodboard = result;
+        saveData();
+        renderSpace();
+      });
+    });
+  }
+
+  // Clear moodboard
+  var clearMood = document.getElementById('clearMoodBtn');
+  if (clearMood) {
+    clearMood.addEventListener('click', function() {
+      appData[currentSpace].moodboard = null;
+      saveData(); renderSpace();
+    });
+  }
+
+  // Moodboard notes
+  var moodNotes = document.getElementById('moodboardNotes');
+  if (moodNotes) {
+    moodNotes.addEventListener('input', function() {
+      appData[currentSpace].moodboardNotes = this.value;
+      scheduleSave();
+    });
+  }
+
+  // Product fields
+  var prodFields = document.querySelectorAll('.prodField');
+  for (var i = 0; i < prodFields.length; i++) {
+    prodFields[i].addEventListener('input', function() {
+      var section = this.getAttribute('data-section');
+      var idx = parseInt(this.getAttribute('data-idx'));
+      var field = this.getAttribute('data-field');
+      var arr = getSection(section);
+      if (arr && arr[idx]) { arr[idx][field] = this.value; scheduleSave(); }
+    });
+  }
+
+  // Product image upload
+  var prodImgs = document.querySelectorAll('.prodImgInput');
+  for (var j = 0; j < prodImgs.length; j++) {
+    prodImgs[j].addEventListener('change', function() {
+      var section = this.getAttribute('data-section');
+      var idx = parseInt(this.getAttribute('data-idx'));
+      var me = this;
+      readFile(this.files[0], function(result) {
+        var arr = getSection(section);
+        if (arr && arr[idx]) { arr[idx].img = result; saveData(); renderSection(section); }
+      });
+    });
+  }
+
+  // Add product row buttons
+  var addBtns = document.querySelectorAll('[id^="addBtn-"]');
+  for (var k = 0; k < addBtns.length; k++) {
+    addBtns[k].addEventListener('click', function() {
+      var section = this.getAttribute('data-section');
+      var arr = getSection(section);
+      if (arr) { arr.push(defaultProduct()); saveData(); renderSection(section); }
+    });
+  }
+
+  // Delete row buttons
+  var delBtns = document.querySelectorAll('.row-del');
+  for (var m = 0; m < delBtns.length; m++) {
+    delBtns[m].addEventListener('click', function() {
+      var section = this.getAttribute('data-section');
+      var idx = parseInt(this.getAttribute('data-idx'));
+      var arr = getSection(section);
+      if (arr) { arr.splice(idx, 1); saveData(); renderSection(section); }
+    });
+  }
+
+  // Acabados fields
+  var acabFields = document.querySelectorAll('.acabadoField');
+  for (var n = 0; n < acabFields.length; n++) {
+    acabFields[n].addEventListener('input', function() {
+      var parts = this.getAttribute('data-acabado-id').split('-');
+      // parts: acabado, zone, field [, field2]
+      var zone = parts[1];
+      var field = parts[2];
+      if (!appData[currentSpace].acabados[zone]) appData[currentSpace].acabados[zone] = {};
+      appData[currentSpace].acabados[zone][field] = this.value;
+      scheduleSave();
+    });
+  }
+
+  // Plano upload
+  var planoInput = document.getElementById('planoInput');
+  if (planoInput) {
+    planoInput.addEventListener('change', function() {
+      readFile(this.files[0], function(result) {
+        appData[currentSpace].carpinteria.plano = result;
+        saveData(); renderSpace();
+      });
+    });
+  }
+
+  // Clear plano
+  var clearPlano = document.getElementById('clearPlanoBtn');
+  if (clearPlano) {
+    clearPlano.addEventListener('click', function() {
+      appData[currentSpace].carpinteria.plano = null;
+      saveData(); renderSpace();
+    });
+  }
+
+  // Carpintería notes
+  var carpNotes = document.getElementById('carpNotes');
+  if (carpNotes) {
+    carpNotes.addEventListener('input', function() {
+      appData[currentSpace].carpinteria.notas = this.value;
+      scheduleSave();
+    });
+  }
+}
+
+// ── HELPERS ───────────────────────────────────
+function getSection(section) {
+  var d = appData[currentSpace];
+  if (section === 'carpPiezas') return d.carpinteria.carpPiezas;
+  return d[section];
+}
+
+function renderSection(section) {
+  var d = appData[currentSpace];
+  var items = getSection(section);
+  var panelKey = section === 'productos' ? 'mobiliario' : (section === 'carpPiezas' ? 'carpinteria' : section);
+
+  if (section === 'carpPiezas') {
+    var panel = document.getElementById('panel-carpinteria');
+    if (panel) { panel.innerHTML = buildCarpinteria(d.carpinteria); bindAll(); }
+    return;
+  }
+
+  var tbody = document.getElementById('tbody-' + section);
+  if (tbody) {
+    var html = '';
+    for (var i = 0; i < items.length; i++) html += buildProductRow(section, items[i], i);
+    tbody.innerHTML = html;
+    bindAll();
+  }
+}
+
+function readFile(file, cb) {
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) { cb(e.target.result); };
+  reader.readAsDataURL(file);
+}
+
+function esc(str) {
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/"/g,'&quot;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
+}
+
+// ── INIT ──────────────────────────────────────
+loadData();
+buildSidebar();
+renderSpace();
+updateProgress();
+</script>
+</body>
+</html>
