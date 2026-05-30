@@ -21,14 +21,14 @@
     { key: "lighting",  name: "Luminarias",   cols: ["id", "name", "category", "space", "brand", "sku", "material", "dims", "price", "qty", "url", "img"] },
     { key: "hardware",  name: "Herrajes",     cols: ["id", "name", "category", "space", "brand", "sku", "material", "dims", "price", "qty", "url", "img"] },
     { key: "equipment", name: "Equipamiento", cols: ["id", "name", "category", "space", "brand", "sku", "material", "dims", "price", "qty", "url", "img"] },
-    { key: "finishes",  name: "Acabados",     cols: ["id", "type", "name", "finish", "space", "brand", "sku", "area"] },
-    { key: "carpentry", name: "Carpinteria",  cols: ["id", "name", "space", "dims", "materials", "finish", "note", "img"] },
+    { key: "finishes",  name: "Acabados",     cols: ["id", "type", "name", "finish", "space", "brand", "sku", "area", "price", "qty"] },
+    { key: "carpentry", name: "Carpinteria",  cols: ["id", "name", "space", "dims", "materials", "finish", "note", "price", "qty", "img"] },
     { key: "renders",   name: "Renders",      cols: ["space", "label", "note", "img"] },
     { key: "planos",    name: "Planos",       cols: ["title", "space", "note", "img"] },
     { key: "spaces",    name: "Espacios",     cols: ["name", "level", "surface", "dims", "floor", "ceiling", "walls", "budget"] }
   ];
   var NUMERIC = { price: 1, qty: 1, budget: 1 };
-  var META_FIELDS = ["studio", "document", "subtitle", "client", "lot", "development", "city", "email", "phone", "version", "date", "code", "currency", "locale", "logo", "heroRender"];
+  var META_FIELDS = ["studio", "document", "subtitle", "client", "lot", "development", "city", "email", "phone", "version", "date", "code", "currency", "locale", "logo", "heroRender", "heroRenderPos"];
 
   /* -------- Construir el libro de Excel a partir de los datos -------- */
   function buildWorkbook() {

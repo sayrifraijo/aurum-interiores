@@ -22,6 +22,8 @@
   /* ---------- helpers ---------- */
   function el(html) { var t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstElementChild; }
   function money(n) { return new Intl.NumberFormat(D.meta.locale || "es-MX", { style: "currency", currency: D.meta.currency || "MXN", maximumFractionDigits: 0 }).format(n); }
+  function qn(p) { return Number(p.qty) || 1; }
+  function lineTotal(p) { return (Number(p.price) || 0) * qn(p); }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]; }); }
   /* Convierte links de Google Drive / Dropbox a imagen directa */
   function imgUrl(u) {
@@ -159,7 +161,7 @@
       '<div class="card__media"><span class="card__cat">' + esc(p.category) + '</span>' + media + '</div>' +
       '<div class="card__body"><div><span class="label card__space">' + esc(p.space) + '</span><h3 class="card__name">' + esc(p.name) + '</h3></div>' +
       '<dl class="spec"><dt>Proveedor</dt><dd>' + esc(p.brand) + '</dd><dt>SKU</dt><dd class="tnum">' + esc(p.sku) + '</dd><dt>Material</dt><dd>' + esc(p.material) + '</dd><dt>Medidas</dt><dd class="tnum">' + esc(p.dims) + '</dd><dt>Cantidad</dt><dd class="tnum">' + esc(p.qty) + '</dd></dl>' +
-      '<div class="card__foot"><div class="price">' + money(p.price * p.qty) + '<small>' + esc(D.meta.currency) + (p.qty > 1 ? ' · ' + money(p.price) + ' c/u' : '') + '</small></div>' +
+      '<div class="card__foot"><div class="price">' + money(lineTotal(p)) + '<small>' + esc(D.meta.currency) + (qn(p) > 1 ? ' · ' + money(p.price) + ' c/u' : '') + '</small></div>' +
       '<div class="card__actions">' + shop + '<button class="add-toggle" title="Agregar a mi selección" aria-label="Agregar"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path class="ic-plus" d="M5 12h14M12 5v14"/><path class="ic-check" d="M4 12.5l5 5 11-11"/></svg></button></div></div>' +
       '</div></article>';
   }
@@ -180,8 +182,8 @@
         '<td class="t-prov">' + esc(p.brand) + '<small class="tnum">' + esc(p.sku) + '</small></td>' +
         '<td class="t-mat">' + esc(p.material) + '</td>' +
         '<td class="tnum t-dim">' + esc(p.dims) + '</td>' +
-        '<td class="tnum t-qty">' + esc(p.qty) + '</td>' +
-        '<td class="tnum t-price">' + money(p.price * p.qty) + '</td>' +
+        '<td class="tnum t-qty">' + esc(qn(p)) + '</td>' +
+        '<td class="tnum t-price">' + money(lineTotal(p)) + '</td>' +
         '<td class="t-buy">' + shop + '</td>' +
       '</tr>';
     }).join("");
@@ -343,7 +345,7 @@
      ============================================================ */
   function updateSummary() {
     var items = BUYABLE.filter(function (p) { return selected.indexOf(p.id) >= 0; });
-    var total = items.reduce(function (s, p) { return s + p.price * p.qty; }, 0);
+    var total = items.reduce(function (s, p) { return s + lineTotal(p); }, 0);
     document.getElementById("sumCount").textContent = items.length + (items.length === 1 ? " elemento" : " elementos");
     document.getElementById("sumTotal").textContent = money(total);
     document.getElementById("summary").classList.toggle("is-on", items.length > 0);
@@ -363,9 +365,9 @@
     if (view === "programa") {
       var poolP = (cat === "Todas") ? BUYABLE : buyablePool(cat);
       if (!poolP.length) { meta.innerHTML = '<div class="ctrlstat"><span class="label">' + esc(cat) + '</span><b>Informativo · sin compra</b></div>'; return; }
-      var totalP = poolP.reduce(function (s, p) { return s + p.price * p.qty; }, 0);
+      var totalP = poolP.reduce(function (s, p) { return s + lineTotal(p); }, 0);
       var selP = poolP.filter(function (p) { return selected.indexOf(p.id) >= 0; });
-      var selTotal = selP.reduce(function (s, p) { return s + p.price * p.qty; }, 0);
+      var selTotal = selP.reduce(function (s, p) { return s + lineTotal(p); }, 0);
       var diff = totalP - selTotal;
       meta.innerHTML =
         '<div class="ctrlstat"><span class="label">Catálogo</span><b class="tnum">' + money(totalP) + '</b></div>' +
@@ -375,7 +377,7 @@
     }
     var pool = (space === "Todos") ? BUYABLE : BUYABLE.filter(function (p) { return p.space === space; });
     var sel = pool.filter(function (p) { return selected.indexOf(p.id) >= 0; });
-    var total = sel.reduce(function (s, p) { return s + p.price * p.qty; }, 0);
+    var total = sel.reduce(function (s, p) { return s + lineTotal(p); }, 0);
     meta.innerHTML = '<div class="ctrlstat"><span class="label">Selección visible</span><b class="tnum">' + sel.length + ' / ' + pool.length + ' · ' + money(total) + '</b></div>';
   }
   function toggleSel(id) {
@@ -391,7 +393,7 @@
     var head = ["Programa", "Elemento", "Espacio", "Proveedor", "SKU", "Material", "Medidas", "Cantidad", "Precio unitario", "Importe", "Liga"];
     var lines = [head.join(",")];
     rows.forEach(function (p) {
-      var r = [p.category, p.name, p.space, p.brand, p.sku, p.material, p.dims, p.qty, p.price, p.price * p.qty, p.url || ""];
+      var r = [p.category, p.name, p.space, p.brand, p.sku, p.material, p.dims, qn(p), p.price, lineTotal(p), p.url || ""];
       lines.push(r.map(function (c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(","));
     });
     var blob = new Blob(["\ufeff" + lines.join("\r\n")], { type: "text/csv;charset=utf-8;" });
@@ -416,12 +418,12 @@
     var sections = groups.map(function (g) {
       var sub = 0;
       var rows = g.items.map(function (p) {
-        var imp = p.price * p.qty; sub += imp;
+        var imp = lineTotal(p); sub += imp;
         return '<tr>' +
           '<td class="pd-name"><b>' + esc(p.name) + '</b>' + (p.sku ? '<span class="pd-sku">' + esc(p.sku) + '</span>' : '') + '</td>' +
           '<td>' + esc(p.space) + '</td>' +
           '<td>' + esc(p.brand || "—") + '</td>' +
-          '<td class="pd-num">' + p.qty + '</td>' +
+          '<td class="pd-num">' + qn(p) + '</td>' +
           '<td class="pd-num">' + money(p.price) + '</td>' +
           '<td class="pd-num pd-imp">' + money(imp) + '</td>' +
           '</tr>';
