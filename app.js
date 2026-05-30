@@ -19,6 +19,30 @@
   var BUYABLE = [].concat(D.products || [], D.lighting || [], D.hardware || [], D.equipment || [], D.carpentry || [], (D.finishes || []).filter(function (f) { return Number(f.price) > 0; }));
   var BUY_BY_ID = {}; BUYABLE.forEach(function (p) { BUY_BY_ID[p.id] = p; });
 
+  /* Grupos de opciones alternativas (A/B/...) — productos que comparten "grupo".
+     Por defecto se selecciona la opción "A" (o la primera) de cada grupo;
+     los productos sin grupo siempre van seleccionados por defecto. */
+  var OPT_GROUPS = (function () {
+    var g = {};
+    BUYABLE.forEach(function (p) {
+      var key = (p.grupo || "").trim();
+      if (!key) return;
+      (g[key] = g[key] || []).push(p);
+    });
+    return g;
+  })();
+  function groupKey(p) { return p && (p.grupo || "").trim(); }
+  function defaultSelection() {
+    var sel = [];
+    BUYABLE.forEach(function (p) { if (!groupKey(p)) sel.push(p.id); });
+    Object.keys(OPT_GROUPS).forEach(function (k) {
+      var items = OPT_GROUPS[k];
+      var def = items.filter(function (p) { return (p.opcion || "").trim().toUpperCase() === "A"; })[0] || items[0];
+      if (def) sel.push(def.id);
+    });
+    return sel;
+  }
+
   /* ---------- helpers ---------- */
   function el(html) { var t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstElementChild; }
   function money(n) { return new Intl.NumberFormat(D.meta.locale || "es-MX", { style: "currency", currency: D.meta.currency || "MXN", maximumFractionDigits: 0 }).format(n); }
@@ -43,7 +67,7 @@
   function emptyState(msg) { return '<p class="empty">' + esc(msg) + '</p>'; }
 
   /* ---------- estado ---------- */
-  var selected = (localStorage.getItem(SEL_KEY) !== null) ? getJSON(SEL_KEY, []) : BUYABLE.map(function (p) { return p.id; });
+  var selected = (localStorage.getItem(SEL_KEY) !== null) ? getJSON(SEL_KEY, []) : defaultSelection();
   if (localStorage.getItem(SEL_KEY) === null) localStorage.setItem(SEL_KEY, JSON.stringify(selected));
   var view = localStorage.getItem(VIEW_KEY) || "programa";
   var space = localStorage.getItem(SPACE_KEY) || "Todos";
@@ -155,10 +179,11 @@
   /* ---------- tarjeta de producto ---------- */
   function productCard(p) {
     var isSel = selected.indexOf(p.id) >= 0;
+    var optBadge = (p.opcion || "").trim() ? '<span class="opt-badge">Opción ' + esc((p.opcion || "").trim().toUpperCase()) + '</span>' : '';
     var media = p.img ? '<img src="' + esc(imgUrl(p.img)) + '" alt="' + esc(p.name) + '">' : '<div class="card__ph"><span class="label">Foto de producto</span></div>';
     var shop = p.url ? '<a class="btn btn--solid btn--sm shop" href="' + esc(p.url) + '" target="_blank" rel="noopener">Comprar →</a>' : '<span class="no-link">Sin liga · cotizar</span>';
-    return '<article class="card' + (isSel ? ' is-selected' : '') + '" data-id="' + esc(p.id) + '">' +
-      '<div class="card__media"><span class="card__cat">' + esc(p.category) + '</span>' + media + '</div>' +
+    return '<article class="card' + (isSel ? ' is-selected' : '') + (groupKey(p) ? ' is-option' : '') + '" data-id="' + esc(p.id) + '">' +
+      '<div class="card__media"><span class="card__cat">' + esc(p.category) + '</span>' + optBadge + media + '</div>' +
       '<div class="card__body"><div><span class="label card__space">' + esc(p.space) + '</span><h3 class="card__name">' + esc(p.name) + '</h3></div>' +
       '<dl class="spec"><dt>Proveedor</dt><dd>' + esc(p.brand) + '</dd><dt>SKU</dt><dd class="tnum">' + esc(p.sku) + '</dd><dt>Material</dt><dd>' + esc(p.material) + '</dd><dt>Medidas</dt><dd class="tnum">' + esc(p.dims) + '</dd><dt>Cantidad</dt><dd class="tnum">' + esc(p.qty) + '</dd></dl>' +
       '<div class="card__foot"><div class="price">' + money(lineTotal(p)) + '<small>' + esc(D.meta.currency) + (qn(p) > 1 ? ' · ' + money(p.price) + ' c/u' : '') + '</small></div>' +
@@ -175,10 +200,11 @@
     if (!items.length) return "";
     var rows = items.map(function (p) {
       var isSel = selected.indexOf(p.id) >= 0;
+      var optTag = (p.opcion || "").trim() ? ' <span class="opt-tag">Opc. ' + esc((p.opcion || "").trim().toUpperCase()) + '</span>' : '';
       var shop = p.url ? '<a class="tlink shop" href="' + esc(p.url) + '" target="_blank" rel="noopener">Comprar →</a>' : '<span class="no-link">Cotizar</span>';
-      return '<tr class="brow' + (isSel ? ' is-selected' : '') + '" data-id="' + esc(p.id) + '">' +
+      return '<tr class="brow' + (isSel ? ' is-selected' : '') + (groupKey(p) ? ' is-option' : '') + '" data-id="' + esc(p.id) + '">' +
         '<td class="brow__sel"><span class="rcheck"></span></td>' +
-        '<td class="brow__name"><b>' + esc(p.name) + '</b>' + (showSpace ? '<small>' + esc(p.space) + '</small>' : '') + '</td>' +
+        '<td class="brow__name"><b>' + esc(p.name) + optTag + '</b>' + (showSpace ? '<small>' + esc(p.space) + '</small>' : '') + '</td>' +
         '<td class="t-prov">' + esc(p.brand) + '<small class="tnum">' + esc(p.sku) + '</small></td>' +
         '<td class="t-mat">' + esc(p.material) + '</td>' +
         '<td class="tnum t-dim">' + esc(p.dims) + '</td>' +
@@ -382,10 +408,28 @@
   }
   function toggleSel(id) {
     var i = selected.indexOf(id);
-    if (i >= 0) selected.splice(i, 1); else selected.push(id);
+    var affected = [id];
+    if (i >= 0) {
+      selected.splice(i, 1);
+    } else {
+      selected.push(id);
+      // Si pertenece a un grupo de opciones, deselecciona las demás opciones del grupo
+      var key = groupKey(BUY_BY_ID[id]);
+      if (key && OPT_GROUPS[key]) {
+        OPT_GROUPS[key].forEach(function (other) {
+          if (other.id !== id) {
+            var j = selected.indexOf(other.id);
+            if (j >= 0) { selected.splice(j, 1); affected.push(other.id); }
+          }
+        });
+      }
+    }
     setSel();
-    Array.prototype.forEach.call(document.querySelectorAll('[data-id="' + id + '"]'), function (n) { n.classList.toggle("is-selected", selected.indexOf(id) >= 0); });
+    affected.forEach(function (aid) {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-id="' + aid + '"]'), function (n) { n.classList.toggle("is-selected", selected.indexOf(aid) >= 0); });
+    });
     updateSummary();
+    updateCtrlMeta();
   }
   function exportCSV(onlySelected) {
     var rows = BUYABLE.filter(function (p) { return !onlySelected || selected.indexOf(p.id) >= 0; });
