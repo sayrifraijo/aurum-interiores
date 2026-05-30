@@ -328,6 +328,7 @@
       if (!body.querySelector(".prog-block")) body.innerHTML = '<p class="empty">No hay elementos.</p>';
     }
     updateCtrlMeta();
+    document.dispatchEvent(new CustomEvent("aurum:rendered"));
   }
 
   function planosHtml(items) {
@@ -591,6 +592,41 @@
     badge.textContent = 'heroRenderPos: ' + (D.meta.heroRenderPos || 'center center') + '  ·  arrastra ↕';
   }
 
+  /* ---------- visor de imágenes (lightbox) ---------- */
+  function initLightbox() {
+    var ZOOM_SEL = ".carp-card__media img, .plano img, .card__media img, .tile img, .hero__render--img";
+    document.body.addEventListener("click", function (e) {
+      var img = e.target.closest(ZOOM_SEL);
+      if (!img || !img.getAttribute("src")) return;
+      if (e.target.closest("a")) return;
+      openLightbox(img.getAttribute("src"), img.getAttribute("alt") || "");
+    });
+    // marcar como ampliables (cursor) tras cada render
+    document.addEventListener("aurum:rendered", markZoomable);
+    markZoomable();
+    function markZoomable() {
+      Array.prototype.forEach.call(document.querySelectorAll(ZOOM_SEL), function (im) { im.classList.add("is-zoomable"); });
+    }
+  }
+  function openLightbox(src, alt) {
+    var ov = document.getElementById("lightbox");
+    if (!ov) {
+      ov = el('<div id="lightbox" class="lightbox"><button class="lightbox__close" aria-label="Cerrar">×</button><img class="lightbox__img" alt=""><figcaption class="lightbox__cap"></figcaption></div>');
+      document.body.appendChild(ov);
+      ov.addEventListener("click", function (e) { if (e.target === ov || e.target.closest(".lightbox__close")) closeLightbox(); });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeLightbox(); });
+    }
+    ov.querySelector(".lightbox__img").src = src;
+    var cap = ov.querySelector(".lightbox__cap"); cap.textContent = alt; cap.style.display = alt ? "" : "none";
+    ov.classList.add("is-open");
+    document.body.style.overflow = "hidden";
+  }
+  function closeLightbox() {
+    var ov = document.getElementById("lightbox");
+    if (ov) ov.classList.remove("is-open");
+    document.body.style.overflow = "";
+  }
+
   /* ============================================================
      BOOT
      ============================================================ */
@@ -604,6 +640,7 @@
     initSpy();
     initTweaks();
     initHeroReframe();
+    initLightbox();
 
     // delegated clicks within programa body (cards + table rows)
     document.getElementById("programaBody").addEventListener("click", function (e) {
